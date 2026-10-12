@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const images=JSON.parse(read('src/image-pack.json'));
+const escapeScript=s=>s.replace(/<\/script/gi,'<\\/script');
+let html=read('src/index.html');
+html=html.replace('<link rel="stylesheet" href="style.css">',()=>`<style>${read('dist/style.css')}</style>`);
+const loader=read('dist/images.js');
+html=html.replace('<script src="catalog.js"></script>',()=>`<script>window.ASSET_IMAGES=${JSON.stringify(images)};${escapeScript(loader)}</script><script src="catalog.js"></script>`);
+html=html.replace(/<script src="([a-z-]+\.js)"><\/script>/g,(_,name)=>`<script>${escapeScript(read('dist/'+name))}</script>`);
+if(/<script src=|<link rel="stylesheet"/.test(html))throw Error('Unexpected external startup dependencies');
+fs.writeFileSync(path.join(root,'dist/index.html'),html);
+console.log(`Built self-contained game page: ${Object.keys(images).length} embedded images, ${(Buffer.byteLength(html)/1048576).toFixed(2)} MB`);

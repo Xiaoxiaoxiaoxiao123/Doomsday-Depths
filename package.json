@@ -1,0 +1,48 @@
+{
+  "name": "doomsday-depths",
+  "version": "0.1.0",
+  "description": "末日纵深 / Doomsday Depths — underground shelter management game",
+  "author": "Xiaoxiaoxiaoxiao123",
+  "private": true,
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "build:web": "node scripts/build.mjs",
+    "test": "node tests/engine.test.cjs && node tests/images.test.cjs",
+    "start": "electron .",
+    "build:windows": "electron-builder --win nsis portable --x64 --publish never",
+    "prepare:android": "node scripts/prepare-android.mjs"
+  },
+  "devDependencies": {
+    "electron": "44.7.0",
+    "electron-builder": "26.17.0"
+  },
+  "build": {
+    "appId": "io.github.xiaoxiaoxiaoxiao123.doomsdaydepths",
+    "productName": "Doomsday Depths",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "desktop/**/*",
+      "dist/index.html",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "末日纵深",
+      "artifactName": "Doomsday-Depths-Setup-${version}-${arch}.${ext}"
+    },
+    "portable": {
+      "artifactName": "Doomsday-Depths-Portable-${version}-${arch}.${ext}"
+    }
+  }
+}
